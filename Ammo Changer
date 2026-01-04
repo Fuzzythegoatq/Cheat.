@@ -1,7 +1,5 @@
 --// Services
-local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
 
 --// Prevent duplicate UI
 if game.CoreGui:FindFirstChild("HydroxideAmmoUI") then
@@ -13,7 +11,8 @@ local aux = loadstring(game:HttpGetAsync(
     "https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"
 ))()
 
---// Default values (editable in UI)
+--// Default values
+local FolderName = "Peterdoodoo"
 local ToolName = "G18c Switch"
 local AmmoValue = 99999999999999
 
@@ -25,75 +24,97 @@ ScreenGui.Parent = game.CoreGui
 
 --// Main Frame
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.fromOffset(260, 160)
+Frame.Size = UDim2.fromOffset(210, 155)
 Frame.Position = UDim2.fromScale(0.5, 0.5)
 Frame.AnchorPoint = Vector2.new(0.5, 0.5)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
 Frame.BorderSizePixel = 0
 Frame.Parent = ScreenGui
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 10)
 
---// Corner
-Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+--// DRAG LINE (WHITE SLIDER)
+local DragLine = Instance.new("Frame")
+DragLine.Size = UDim2.new(1, -20, 0, 4)
+DragLine.Position = UDim2.fromOffset(10, 6)
+DragLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DragLine.Parent = Frame
+Instance.new("UICorner", DragLine).CornerRadius = UDim.new(1, 0)
 
 --// Title
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Size = UDim2.new(1, 0, 0, 20)
+Title.Position = UDim2.fromOffset(0, 10)
 Title.BackgroundTransparency = 1
-Title.Text = "Ammo changer"
+Title.Text = "Ammo Editor"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 14
+Title.TextSize = 12
 Title.Parent = Frame
 
---// Tool Name Box
+--// Folder Box
+local FolderBox = Instance.new("TextBox")
+FolderBox.PlaceholderText = "Workspace Folder"
+FolderBox.Text = FolderName
+FolderBox.Size = UDim2.new(1, -16, 0, 22)
+FolderBox.Position = UDim2.fromOffset(8, 34)
+FolderBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+FolderBox.TextColor3 = Color3.new(1, 1, 1)
+FolderBox.Font = Enum.Font.Gotham
+FolderBox.TextSize = 11
+FolderBox.ClearTextOnFocus = false
+FolderBox.Parent = Frame
+Instance.new("UICorner", FolderBox).CornerRadius = UDim.new(0, 6)
+
+--// Tool Box
 local ToolBox = Instance.new("TextBox")
-ToolBox.PlaceholderText = "Tool Name (ex: G18c Switch)"
+ToolBox.PlaceholderText = "Tool Name"
 ToolBox.Text = ToolName
-ToolBox.Size = UDim2.new(1, -20, 0, 30)
-ToolBox.Position = UDim2.fromOffset(10, 40)
+ToolBox.Size = UDim2.new(1, -16, 0, 22)
+ToolBox.Position = UDim2.fromOffset(8, 60)
 ToolBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 ToolBox.TextColor3 = Color3.new(1, 1, 1)
 ToolBox.Font = Enum.Font.Gotham
-ToolBox.TextSize = 13
+ToolBox.TextSize = 11
 ToolBox.ClearTextOnFocus = false
 ToolBox.Parent = Frame
-Instance.new("UICorner", ToolBox).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", ToolBox).CornerRadius = UDim.new(0, 6)
 
 --// Ammo Value Box
 local ValueBox = Instance.new("TextBox")
 ValueBox.PlaceholderText = "Ammo Value"
 ValueBox.Text = tostring(AmmoValue)
-ValueBox.Size = UDim2.new(1, -20, 0, 30)
-ValueBox.Position = UDim2.fromOffset(10, 80)
+ValueBox.Size = UDim2.new(1, -16, 0, 22)
+ValueBox.Position = UDim2.fromOffset(8, 86)
 ValueBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 ValueBox.TextColor3 = Color3.new(1, 1, 1)
 ValueBox.Font = Enum.Font.Gotham
-ValueBox.TextSize = 13
+ValueBox.TextSize = 11
 ValueBox.ClearTextOnFocus = false
 ValueBox.Parent = Frame
-Instance.new("UICorner", ValueBox).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", ValueBox).CornerRadius = UDim.new(0, 6)
 
 --// Apply Button
 local Button = Instance.new("TextButton")
-Button.Text = "Apply Ammo"
-Button.Size = UDim2.new(1, -20, 0, 35)
-Button.Position = UDim2.fromOffset(10, 120)
+Button.Text = "Apply"
+Button.Size = UDim2.new(1, -16, 0, 26)
+Button.Position = UDim2.fromOffset(8, 114)
 Button.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
 Button.TextColor3 = Color3.new(1, 1, 1)
 Button.Font = Enum.Font.GothamBold
-Button.TextSize = 14
+Button.TextSize = 12
 Button.Parent = Frame
-Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 10)
+Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
 
 --// Button Logic
 Button.MouseButton1Click:Connect(function()
+    FolderName = FolderBox.Text
     ToolName = ToolBox.Text
     AmmoValue = tonumber(ValueBox.Text) or AmmoValue
 
-    local toolFolder = workspace:FindFirstChild("Peterdoodoo")
-    if not toolFolder then return end
+    local folder = workspace:FindFirstChild(FolderName)
+    if not folder then return end
 
-    local tool = toolFolder:FindFirstChild(ToolName)
+    local tool = folder:FindFirstChild(ToolName)
     if not tool then return end
 
     local GunClient = tool:FindFirstChild("GunClient")
@@ -104,12 +125,12 @@ Button.MouseButton1Click:Connect(function()
         "Reload",
         2,
         {
-            [1] = "ActuallyEquipped",
-            [2] = "Enabled",
-            [3] = "Reloading",
-            [4] = "Ammo",
-            [5] = "LimitedAmmoEnabled",
-            [6] = "Mag"
+            "ActuallyEquipped",
+            "Enabled",
+            "Reloading",
+            "Ammo",
+            "LimitedAmmoEnabled",
+            "Mag"
         }
     )
 
@@ -118,30 +139,18 @@ Button.MouseButton1Click:Connect(function()
     end
 end)
 
---// Dragging (Mobile + PC)
+--// DRAG LOGIC (ONLY THE WHITE LINE)
 do
-    local dragging, dragStart, startPos
+    local dragging = false
+    local dragStart
+    local startPos
 
-    local function update(input)
-        local delta = input.Position - dragStart
-        Frame.Position = UDim2.fromOffset(
-            startPos.X.Offset + delta.X,
-            startPos.Y.Offset + delta.Y
-        )
-    end
-
-    Frame.InputBegan:Connect(function(input)
+    DragLine.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1
         or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = Frame.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
         end
     end)
 
@@ -149,7 +158,18 @@ do
         if dragging and
         (input.UserInputType == Enum.UserInputType.MouseMovement
         or input.UserInputType == Enum.UserInputType.Touch) then
-            update(input)
+            local delta = input.Position - dragStart
+            Frame.Position = UDim2.fromOffset(
+                startPos.X.Offset + delta.X,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
         end
     end)
 end
